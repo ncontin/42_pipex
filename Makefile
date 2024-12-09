@@ -6,31 +6,31 @@
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/03 11:54:44 by ncontin           #+#    #+#              #
-#    Updated: 2024/12/05 12:28:08 by ncontin          ###   ########.fr        #
+#    Updated: 2024/12/09 13:32:08 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRC = pipex.c
+SRC = pipex.c \
+		libft/libft.a \
 
-OBJS = $(SRC:.c=.o)
-CC = cc
-CCFLAGS = -Wall -Wextra -Werror
+CC = gcc
+CCFLAGS = -Wall -Wextra -Werror -w
 RM = rm -f
 NAME = pipex.a
 
+$(NAME):
+	make -C libft
+	gcc $(CCFLAGS) $(SRC) -o $(NAME)
+
 all: $(NAME)
 
-libft:
-	@make -C libft/
-
-$(NAME): $(OBJS)
-	ar rc $(NAME)
-
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(NAME)
+	make clean -C libft
 
 fclean: clean
 	$(RM) $(NAME)
+	make fclean -C libft
 
 re: fclean all
 
