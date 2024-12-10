@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/09 18:48:22 by ncontin          ###   ########.fr       */
+/*   Updated: 2024/12/10 14:06:36 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,34 @@ It must take 4 arguments:
 •cmd1 and cmd2 are shell commands with their parameters.
 It must behave exactly the same as the shell command below:
 $> < file1 cmd1 | cmd2 > file2 */
-#include <aio.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
+#include "pipex.h"
 
-// void	parse_command(char *cmd)
+char	*find_path(char **env)
+{
+	int		i;
+	char	*ret;
+
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], "PATH=", 5) == 0)
+		{
+			printf("%d", ft_strlen(env[i]));
+			printf("%s", ft_substr(env[i], 5, ft_strlen(env[i]) - 5));
+			return (env[i]);
+		}
+		i++;
+	}
+	return (0);
+}
+
+// void	parse_command(char *cmd, char **env)
 // {
-// 	return (0);
+// 	// Check in all possible locations if the binary (command) requested by the user exists.
+// 	find_path(env);
 // }
-void	child_process(int fd_infile, int end[2], char *cmd1)
+
+void	child_process(int fd_infile, int end[2], char *cmd1, char **env)
 {
 	// char	**args;
 	// redirect text of infile in the terminal for cmd1 to read
@@ -35,17 +53,15 @@ void	child_process(int fd_infile, int end[2], char *cmd1)
 	dup2(end[1], 1);
 	close(end[0]);
 	close(fd_infile);
-	// execve(cmd1, argv, envp);// Parse the command
-	// args = parse_command(cmd1);
-	// // Execute cmd2
-	// execve(args[0], args, NULL);
+	char *const args[] = {"ls", NULL};
+	char *const envp[] = {NULL};
+	execve("/usr/bin/ls", args, envp);
 }
 
-void	parent_process(int fd_outfile, int end[2], char *cmd2)
+void	parent_process(int fd_outfile, int end[2], char *cmd2, char **env)
 {
 	int	status;
 
-	// char	**args;
 	// Wait for the child process to finish
 	waitpid(-1, &status, 0);
 	// Redirect the read end of the pipe to standard input
@@ -54,35 +70,28 @@ void	parent_process(int fd_outfile, int end[2], char *cmd2)
 	dup2(fd_outfile, 1);
 	close(end[1]);
 	close(fd_outfile);
-	// Parse the command
-	// args = parse_command(cmd2);
-	// // Execute cmd2
-	// execve(args[0], args, NULL);
+	char *const args[] = {"wc", NULL};
+	char *const envp[] = {NULL};
+	execve("/usr/bin/wc", args, envp);
 	exit(1);
 }
 
-void	pipex(int fd_infile, int fd_outfile, char *cmd1, char *cmd2)
+void	pipex(int fd_infile, int fd_outfile, char **cmd, char **env)
 {
-	int	end[2];
+	int		end[2];
+	pid_t	parent;
 
-	pid_t parent; // process id
-	// pipe() takes an array of two int, and links them together
 	pipe(end);
-	// what is done in end[0] is visible to end[1], and vice versa
-	// pipe() assigns an fd to each end
-	// end[1] will write to the its own fd,
-	// and end[0] will read end[1]’s fd and write to its own pipe(end);
-	parent = fork();
 	// fork left child
+	parent = fork();
 	if (parent < 0)
 		return (perror("Fork: "));
 	// if fork() returns 0, we are in the child process
 	if (parent == 0)
-		child_process(fd_infile, end, cmd1);
-	else
-		parent_process(fd_outfile, end, cmd2);
+		child_process(fd_infile, end, cmd[2], env);
+	parent_process(fd_outfile, end, cmd[3], env);
 }
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **env)
 {
 	int	fd_infile;
 	int	fd_outfile;
@@ -90,6 +99,7 @@ int	main(int argc, char **argv)
 	if (argc != 5)
 	{
 		ft_putstr_fd("argument error\n", 1);
+		printf("%s", find_path(env));
 		return (1);
 	}
 	// open infile for reading
@@ -105,7 +115,7 @@ int	main(int argc, char **argv)
 		perror("Error opening output file");
 		return (1);
 	}
-	pipex(fd_infile, fd_outfile, argv[2], argv[3]);
+	pipex(fd_infile, fd_outfile, argv, env);
 	close(fd_infile);
 	close(fd_outfile);
 }

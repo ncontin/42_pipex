@@ -6,7 +6,7 @@
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/10 10:27:46 by ncontin           #+#    #+#              #
-#    Updated: 2024/10/23 18:46:52 by ncontin          ###   ########.fr        #
+#    Updated: 2024/12/10 13:58:33 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,10 +66,10 @@ NAME	= libft.a
 all: $(NAME)
 
 bonus: $(OBJS_BONUS)
-	ar rc $(NAME) $(OBJS_BONUS)
+	ar rcs $(NAME) $(OBJS_BONUS)
 
 $(NAME): $(OBJS)
-	ar rc $(NAME) $(OBJS)
+	ar rcs $(NAME) $(OBJS)
 
 clean:
 	$(RM) $(OBJS_ALL)
