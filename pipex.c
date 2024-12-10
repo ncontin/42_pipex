@@ -6,61 +6,34 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/10 14:06:36 by ncontin          ###   ########.fr       */
+/*   Updated: 2024/12/10 19:01:05 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* Your program will be executed as follows:
-./pipex file1 cmd1 cmd2 file2
-It must take 4 arguments:
-•file1 and file2 are file names.
-•cmd1 and cmd2 are shell commands with their parameters.
-It must behave exactly the same as the shell command below:
-$> < file1 cmd1 | cmd2 > file2 */
 #include "pipex.h"
-
-char	*find_path(char **env)
-{
-	int		i;
-	char	*ret;
-
-	i = 0;
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], "PATH=", 5) == 0)
-		{
-			printf("%d", ft_strlen(env[i]));
-			printf("%s", ft_substr(env[i], 5, ft_strlen(env[i]) - 5));
-			return (env[i]);
-		}
-		i++;
-	}
-	return (0);
-}
-
-// void	parse_command(char *cmd, char **env)
-// {
-// 	// Check in all possible locations if the binary (command) requested by the user exists.
-// 	find_path(env);
-// }
 
 void	child_process(int fd_infile, int end[2], char *cmd1, char **env)
 {
-	// char	**args;
-	// redirect text of infile in the terminal for cmd1 to read
+	char	*full_path;
+	char	**args;
+
 	dup2(fd_infile, 0);
-	// redirect output of cmd1 to the other end of the pipe
 	dup2(end[1], 1);
 	close(end[0]);
 	close(fd_infile);
-	char *const args[] = {"ls", NULL};
-	char *const envp[] = {NULL};
-	execve("/usr/bin/ls", args, envp);
+	// might have to free more stuff
+	args = ft_split(cmd1, ' ');
+	full_path = check_command(args[0], env);
+	execve(full_path, args, env);
+	free(full_path);
+	free_array(args);
 }
 
 void	parent_process(int fd_outfile, int end[2], char *cmd2, char **env)
 {
-	int	status;
+	int		status;
+	char	*full_path;
+	char	**args;
 
 	// Wait for the child process to finish
 	waitpid(-1, &status, 0);
@@ -70,9 +43,11 @@ void	parent_process(int fd_outfile, int end[2], char *cmd2, char **env)
 	dup2(fd_outfile, 1);
 	close(end[1]);
 	close(fd_outfile);
-	char *const args[] = {"wc", NULL};
-	char *const envp[] = {NULL};
-	execve("/usr/bin/wc", args, envp);
+	args = ft_split(cmd2, ' ');
+	full_path = check_command(args[0], env);
+	execve(full_path, args, env);
+	free(full_path);
+	free_array(args);
 	exit(1);
 }
 
@@ -99,7 +74,6 @@ int	main(int argc, char **argv, char **env)
 	if (argc != 5)
 	{
 		ft_putstr_fd("argument error\n", 1);
-		printf("%s", find_path(env));
 		return (1);
 	}
 	// open infile for reading

@@ -5,37 +5,41 @@
 #                                                     +:+ +:+         +:+      #
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/12/10 19:13:12 by ncontin           #+#    #+#              #
-#    Updated: 2024/12/10 19:14:20 by ncontin          ###   ########.fr        #
+#    Created: 2024/12/03 11:54:44 by ncontin           #+#    #+#              #
+#    Updated: 2024/12/10 19:09:30 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = pipex
+SRC = pipex.c \
+		pipex_utils.c\
 
 CC = gcc
+CCFLAGS = -Wall -Wextra -Werror
+RM = rm -f
 
-CFLAGS = -Werror -Wall -Wextra -fsanitize=address
+libft = libft/libft.a
 
-RM = rm -rf
+NAME = pipex
 
-SRCS = 	pipex.c\
-		pipex_utils.c\
-		libft/libft.a\
+OBJ := $(SRC:.c=.o)
 
+all: $(NAME)
 
-$(NAME) :
-	make all -C libft
-	gcc $(CFLAGS) $(SRCS) -o $(NAME)
+$(NAME): $(OBJ)
+	make -C libft
+	$(CC)  $^ -Llibft -lft -o $(NAME)
 
+%.o: %.c
+	$(CC) $(CCFLAGS) -Iincludes -Ilibft -c $< -o $@
 
-all : $(NAME)
-
-fclean : clean
-	$(RM) $(NAME)
-	make fclean -C libft
-
-clean :
+clean:
 	$(RM) $(NAME)
 	make clean -C libft
 
-re : fclean all
+fclean: clean
+	$(RM) $(NAME)
+	make fclean -C libft
+
+re: fclean all
+
+.PHONY: all, clean, fclean, re
