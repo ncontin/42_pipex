@@ -6,7 +6,7 @@
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/10 19:13:12 by ncontin           #+#    #+#              #
-#    Updated: 2024/12/10 19:14:20 by ncontin          ###   ########.fr        #
+#    Updated: 2024/12/11 13:04:01 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ NAME = pipex
 
 CC = gcc
 
-CFLAGS = -Werror -Wall -Wextra -fsanitize=address
+CFLAGS = -Werror -Wall -Wextra
+#-fsanitize=address
 
 RM = rm -rf
 

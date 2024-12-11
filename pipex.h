@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:52 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/10 19:00:54 by ncontin          ###   ########.fr       */
+/*   Updated: 2024/12/11 19:21:31 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,6 @@
 void	free_array(char **array);
 char	**get_paths(char **env);
 char	*check_command(char *cmd, char **env);
+void	handle_exit(char *str, int is_infile);
 
 #endif
