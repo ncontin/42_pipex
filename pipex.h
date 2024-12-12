@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:52 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/11 19:21:31 by ncontin          ###   ########.fr       */
+/*   Updated: 2024/12/12 19:20:36 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
+void	handle_errors(char *cmd, char **args);
 void	free_array(char **array);
 char	**get_paths(char **env);
 char	*check_command(char *cmd, char **env);

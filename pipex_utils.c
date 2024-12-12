@@ -6,16 +6,25 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 18:59:09 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/11 19:21:10 by ncontin          ###   ########.fr       */
+/*   Updated: 2024/12/12 19:20:19 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
+void	handle_errors(char *cmd, char **args)
+{
+	ft_putstr_fd("command not found: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd("\n", 2);
+	free_array(args);
+	exit(127);
+}
+
 void	handle_exit(char *str, int is_infile)
 {
 	perror(str);
-	if (access(str, F_OK) != 0) // file does not exist
+	if (access(str, F_OK) != 0)
 		exit(1);
 	else if (access(str, R_OK) != 0)
 	{
@@ -40,7 +49,6 @@ void	free_array(char **array)
 	free(array);
 }
 
-// 2 malloc for split so need to free array and arra items
 char	**get_paths(char **env)
 {
 	int		i;
@@ -59,7 +67,6 @@ char	**get_paths(char **env)
 	return (NULL);
 }
 
-// remember to free full_path
 char	*check_command(char *cmd, char **env)
 {
 	int		i;
