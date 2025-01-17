@@ -6,13 +6,11 @@
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/10 19:13:12 by ncontin           #+#    #+#              #
-#    Updated: 2024/12/12 19:30:21 by ncontin          ###   ########.fr        #
+#    Updated: 2024/12/16 19:11:25 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
-
-CC = gcc
 
 CFLAGS = -Werror -Wall -Wextra
 
@@ -25,7 +23,7 @@ SRCS = 	pipex.c\
 
 $(NAME) :
 	make all -C libft
-	gcc $(CFLAGS) $(SRCS) -o $(NAME)
+	cc $(CFLAGS) $(SRCS) -o $(NAME)
 
 
 all : $(NAME)
@@ -35,7 +33,8 @@ fclean : clean
 	make fclean -C libft
 
 clean :
-	$(RM) $(NAME)
 	make clean -C libft
 
 re : fclean all
+
+.PHONY: all clean fclean re

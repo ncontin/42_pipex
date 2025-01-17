@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 18:59:09 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/12 19:20:19 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/01/17 18:42:33 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 void	handle_errors(char *cmd, char **args)
 {
-	ft_putstr_fd("command not found: ", 2);
 	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd("\n", 2);
+	ft_putstr_fd(": command not found\n", 2);
 	free_array(args);
 	exit(127);
 }
@@ -60,6 +59,7 @@ char	**get_paths(char **env)
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 		{
 			paths = ft_split(env[i] + 5, ':');
+			
 			return (paths);
 		}
 		i++;

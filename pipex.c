@@ -6,19 +6,19 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2024/12/12 19:20:25 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/01/17 18:45:06 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	child_process(int fdin, int end[2], char *cmd, char **env)
+void	process_one(int fdin, int end[2], char *cmd, char **env)
 {
 	char	*full_path;
 	char	**args;
 
-	dup2(fdin, 0);
-	dup2(end[1], 1);
+	dup2(fdin, STDIN_FILENO);
+	dup2(end[1], STDOUT_FILENO);
 	close(end[0]);
 	close(fdin);
 	args = ft_split(cmd, ' ');
@@ -33,15 +33,13 @@ void	child_process(int fdin, int end[2], char *cmd, char **env)
 	free_array(args);
 }
 
-void	parent_process(int fdout, int end[2], char *cmd, char **env)
+void	process_two(int fdout, int end[2], char *cmd, char **env)
 {
-	int		status;
 	char	*full_path;
 	char	**args;
 
-	waitpid(-1, &status, 0);
-	dup2(end[0], 0);
-	dup2(fdout, 1);
+	dup2(end[0], STDIN_FILENO);
+	dup2(fdout, STDOUT_FILENO);
 	close(end[1]);
 	close(fdout);
 	args = ft_split(cmd, ' ');
@@ -58,27 +56,37 @@ void	parent_process(int fdout, int end[2], char *cmd, char **env)
 
 void	pipex(int fdin, int fdout, char **cmd, char **env)
 {
+	int		status;
 	int		end[2];
-	pid_t	parent;
+	pid_t	proc_one;
+	pid_t	proc_two;
 
 	pipe(end);
-	parent = fork();
-	if (parent < 0)
-		return (perror(""));
-	if (parent == 0)
-		child_process(fdin, end, cmd[2], env);
-	else
-		parent_process(fdout, end, cmd[3], env);
+	proc_one = fork();
+	if (proc_one < 0)
+		return (perror("Fork: "));
+	if (proc_one == 0)
+		process_one(fdin, end, cmd[2], env);
+	proc_two = fork();
+	if (proc_two < 0)
+		return (perror("Fork: "));
+	if (proc_two == 0)
+		process_two(fdout, end, cmd[3], env);
+	close(end[0]);
+	close(end[1]);
+	waitpid(proc_one, &status, 0);
+	waitpid(proc_two, &status, 0);
 }
 
 int	main(int argc, char **argv, char **env)
 {
 	int	fdin;
 	int	fdout;
+	int	i;
 
 	if (argc != 5)
 	{
-		perror("Invalid arguments");
+		ft_putstr_fd("Invalid arguments\n", 2);
 		exit(1);
 	}
 	fdin = open(argv[1], O_RDONLY);
@@ -90,5 +98,4 @@ int	main(int argc, char **argv, char **env)
 	pipex(fdin, fdout, argv, env);
 	close(fdin);
 	close(fdout);
-	exit(0);
 }
