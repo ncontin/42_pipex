@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 18:59:09 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 17:23:20 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/06 17:54:10 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	handle_cmd_not_found(char *cmd, char **args, int is_1st)
 	{
 		ft_putstr_fd(cmd, 2);
 		ft_putstr_fd(": command not found\n", 2);
-		// free_array(args);
+		free_array(args);
 		exit(0);
 	}
 	else

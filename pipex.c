@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 17:24:21 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/06 17:42:29 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,8 @@ void	process_2nd_child(int fdout, int end[2], char *cmd, char **env)
 
 void	pipex(int fdin, int fdout, char **argv, char **env)
 {
-	int		status;
+	int		status1;
+	int		status2;
 	int		end[2];
 	pid_t	proc_one;
 	pid_t	proc_two;
@@ -74,10 +75,10 @@ void	pipex(int fdin, int fdout, char **argv, char **env)
 		process_2nd_child(fdout, end, argv[3], env);
 	close(end[0]);
 	close(end[1]);
-	waitpid(proc_one, &status, 0);
-	waitpid(proc_two, &status, 0);
-	if (WIFEXITED(status))
-		exit(WEXITSTATUS(status));
+	waitpid(proc_one, &status1, 0);
+	waitpid(proc_two, &status2, 0);
+	if (WIFEXITED(status2))
+		exit(WEXITSTATUS(status2));
 }
 
 int	main(int argc, char **argv, char **env)
@@ -94,8 +95,13 @@ int	main(int argc, char **argv, char **env)
 	fdout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fdin < 0)
 	{
-		handle_exit(argv[1], 1);
-		handle_exit(argv[4], 0);
+		perror(argv[1]);
+		fdin = open("/dev/null", O_RDONLY);
+	}
+	if (fdout < 0)
+	{
+		perror(argv[4]);
+		exit(1);
 	}
 	pipex(fdin, fdout, argv, env);
 	close(fdin);

@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 12:23:53 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 12:28:17 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/06 17:53:34 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,25 @@ char	**split_env_path(char **env)
 	return (NULL);
 }
 
-char	*parse_command(char *cmd, char **env)
+char	*check_cmd_in_path(char *path, char *cmd)
 {
-	int		i;
-	char	**paths;
 	char	*full_path;
 	char	*temp;
+
+	temp = ft_strjoin(path, "/");
+	full_path = ft_strjoin(temp, cmd);
+	free(temp);
+	if (access(full_path, X_OK) == 0)
+		return (full_path);
+	free(full_path);
+	return (NULL);
+}
+
+char	*parse_command(char *cmd, char **env)
+{
+	char	**paths;
+	char	*full_path;
+	int		i;
 
 	i = 0;
 	if (access(cmd, X_OK) == 0)
@@ -47,15 +60,12 @@ char	*parse_command(char *cmd, char **env)
 		return (NULL);
 	while (paths[i])
 	{
-		temp = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(temp, cmd);
-		free(temp);
-		if (access(full_path, X_OK) == 0)
+		full_path = check_cmd_in_path(paths[i], cmd);
+		if (full_path)
 		{
 			free_array(paths);
 			return (full_path);
 		}
-		free(full_path);
 		i++;
 	}
 	free_array(paths);
