@@ -6,7 +6,7 @@
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/10 19:13:12 by ncontin           #+#    #+#              #
-#    Updated: 2024/12/16 19:11:25 by ncontin          ###   ########.fr        #
+#    Updated: 2025/02/06 16:14:35 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,14 +17,13 @@ CFLAGS = -Werror -Wall -Wextra
 RM = rm -rf
 
 SRCS = 	pipex.c\
-		pipex_utils.c\
+		errors.c\
+		parser.c\
 		libft/libft.a\
-
 
 $(NAME) :
 	make all -C libft
 	cc $(CFLAGS) $(SRCS) -o $(NAME)
-
 
 all : $(NAME)
 
