@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:52 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 16:55:50 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/06 17:57:04 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,8 @@
 # include "libft/libft.h"
 # include <fcntl.h>
 # include <stdio.h>
-# include <stdlib.h>
 # include <string.h>
 # include <sys/wait.h>
-# include <unistd.h>
 
 # define TRUE 1
 # define FALSE 0
