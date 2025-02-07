@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:52 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 17:57:04 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/07 12:20:02 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 void	handle_cmd_not_found(char *cmd, char **args, int is_1st);
 void	free_array(char **array);
 char	*parse_command(char *cmd, char **env);
-void	handle_exit(char *str, int is_1st);
 void	handle_fork_error(pid_t process);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 18:59:09 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 17:59:20 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/07 12:16:52 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,31 +28,6 @@ void	handle_cmd_not_found(char *cmd, char **args, int is_1st)
 		free_array(args);
 		exit(127);
 	}
-}
-
-void	handle_exit(char *str, int is_infile)
-{
-	if (access(str, F_OK) != 0)
-	{
-		perror(str);
-		// ft_putstr_fd(str, 2);
-		// ft_putstr_fd(":no such file or directory: ", 2);
-		exit(1);
-	}
-	else if (access(str, R_OK) != 0)
-	{
-		if (is_infile == 1)
-		{
-			perror(str);
-			exit(0);
-		}
-		else
-		{
-			perror(str);
-			exit(1);
-		}
-	}
-	exit(1);
 }
 
 void	handle_fork_error(pid_t process)
