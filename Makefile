@@ -6,7 +6,7 @@
 #    By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/10 19:13:12 by ncontin           #+#    #+#              #
-#    Updated: 2025/02/06 16:14:35 by ncontin          ###   ########.fr        #
+#    Updated: 2025/02/10 17:33:57 by ncontin          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ RM = rm -rf
 SRCS = 	pipex.c\
 		errors.c\
 		parser.c\
+		children.c\
 		libft/libft.a\
 
 $(NAME) :

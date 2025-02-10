@@ -6,54 +6,27 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 17:57:45 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/10 17:35:44 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	process_1st_child(int fdin, int end[2], char *cmd, char **env)
+static void	close_fds_and_pipe(int end[2], int fdin, int fdout)
 {
-	char	*full_path;
-	char	**args;
-
-	dup2(fdin, STDIN_FILENO);
-	dup2(end[1], STDOUT_FILENO);
 	close(end[0]);
+	close(end[1]);
 	close(fdin);
-	args = ft_split(cmd, ' ');
-	if (!args)
-		exit(EXIT_FAILURE);
-	full_path = parse_command(args[0], env);
-	if (!full_path)
-		handle_cmd_not_found(args[0], args, TRUE);
-	execve(full_path, args, env);
-	perror("execve");
-	free(full_path);
-	free_array(args);
-	exit(EXIT_FAILURE);
+	close(fdout);
 }
 
-void	process_2nd_child(int fdout, int end[2], char *cmd, char **env)
+static void	wait_children_and_exit(pid_t proc_one, pid_t proc_two, int status1,
+		int status2)
 {
-	char	*full_path;
-	char	**args;
-
-	dup2(end[0], STDIN_FILENO);
-	dup2(fdout, STDOUT_FILENO);
-	close(end[1]);
-	close(fdout);
-	args = ft_split(cmd, ' ');
-	if (!args)
-		exit(EXIT_FAILURE);
-	full_path = parse_command(args[0], env);
-	if (!full_path)
-		handle_cmd_not_found(args[0], args, FALSE);
-	execve(full_path, args, env);
-	perror("execve");
-	free(full_path);
-	free_array(args);
-	exit(0);
+	waitpid(proc_one, &status1, 0);
+	waitpid(proc_two, &status2, 0);
+	if (WIFEXITED(status2))
+		exit(WEXITSTATUS(status2));
 }
 
 void	pipex(int fdin, int fdout, char **argv, char **env)
@@ -64,21 +37,25 @@ void	pipex(int fdin, int fdout, char **argv, char **env)
 	pid_t	proc_one;
 	pid_t	proc_two;
 
+	status1 = 0;
+	status2 = 0;
 	pipe(end);
 	proc_one = fork();
 	handle_fork_error(proc_one);
 	if (proc_one == 0)
+	{
+		close(fdout);
 		process_1st_child(fdin, end, argv[2], env);
+	}
 	proc_two = fork();
 	handle_fork_error(proc_two);
 	if (proc_two == 0)
+	{
+		close(fdin);
 		process_2nd_child(fdout, end, argv[3], env);
-	close(end[0]);
-	close(end[1]);
-	waitpid(proc_one, &status1, 0);
-	waitpid(proc_two, &status2, 0);
-	if (WIFEXITED(status2))
-		exit(WEXITSTATUS(status2));
+	}
+	close_fds_and_pipe(end, fdin, fdout);
+	wait_children_and_exit(proc_one, proc_two, status1, status2);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -104,6 +81,4 @@ int	main(int argc, char **argv, char **env)
 		exit(1);
 	}
 	pipex(fdin, fdout, argv, env);
-	close(fdin);
-	close(fdout);
 }
