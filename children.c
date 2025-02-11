@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:32:20 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/10 17:32:43 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/11 12:39:09 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	process_1st_child(int fdin, int end[2], char *cmd, char **env)
 		exit(EXIT_FAILURE);
 	full_path = parse_command(args[0], env);
 	if (!full_path)
-		handle_cmd_not_found(args[0], args, TRUE);
+		handle_cmd_not_found(args[0], args);
 	execve(full_path, args, env);
 	perror("execve");
 	free(full_path);
@@ -50,7 +50,7 @@ void	process_2nd_child(int fdout, int end[2], char *cmd, char **env)
 		exit(EXIT_FAILURE);
 	full_path = parse_command(args[0], env);
 	if (!full_path)
-		handle_cmd_not_found(args[0], args, FALSE);
+		handle_cmd_not_found(args[0], args);
 	execve(full_path, args, env);
 	perror("execve");
 	free(full_path);

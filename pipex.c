@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/10 17:35:44 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/11 12:54:04 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,42 +20,40 @@ static void	close_fds_and_pipe(int end[2], int fdin, int fdout)
 	close(fdout);
 }
 
-static void	wait_children_and_exit(pid_t proc_one, pid_t proc_two, int status1,
-		int status2)
+static void	wait_children_and_exit(pid_t proc_one, pid_t proc_two, int status)
 {
-	waitpid(proc_one, &status1, 0);
-	waitpid(proc_two, &status2, 0);
-	if (WIFEXITED(status2))
-		exit(WEXITSTATUS(status2));
+	waitpid(proc_one, &status, 0);
+	waitpid(proc_two, &status, 0);
+	if (WIFEXITED(status))
+		exit(WEXITSTATUS(status));
 }
 
 void	pipex(int fdin, int fdout, char **argv, char **env)
 {
-	int		status1;
-	int		status2;
+	int		status;
 	int		end[2];
 	pid_t	proc_one;
 	pid_t	proc_two;
 
-	status1 = 0;
-	status2 = 0;
-	pipe(end);
+	status = 0;
+	if (pipe(end) < 0)
+		handle_pipe_error(fdin, fdout);
 	proc_one = fork();
-	handle_fork_error(proc_one);
+	handle_fork_error(proc_one, fdin, fdout, end);
 	if (proc_one == 0)
 	{
 		close(fdout);
 		process_1st_child(fdin, end, argv[2], env);
 	}
 	proc_two = fork();
-	handle_fork_error(proc_two);
+	handle_fork_error(proc_two, fdin, fdout, end);
 	if (proc_two == 0)
 	{
 		close(fdin);
 		process_2nd_child(fdout, end, argv[3], env);
 	}
 	close_fds_and_pipe(end, fdin, fdout);
-	wait_children_and_exit(proc_one, proc_two, status1, status2);
+	wait_children_and_exit(proc_one, proc_two, status);
 }
 
 int	main(int argc, char **argv, char **env)

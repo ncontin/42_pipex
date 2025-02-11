@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 12:23:53 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/06 17:53:34 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/11 12:56:24 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ char	*parse_command(char *cmd, char **env)
 
 	i = 0;
 	if (access(cmd, X_OK) == 0)
-		return (ft_strdup(cmd));
+	{
+		full_path = ft_strdup(cmd);
+		return (full_path);
+	}
 	paths = split_env_path(env);
 	if (!paths)
 		return (NULL);
