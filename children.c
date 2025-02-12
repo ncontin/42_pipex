@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:32:20 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/11 12:39:09 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/12 11:30:53 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,5 @@ void	process_2nd_child(int fdout, int end[2], char *cmd, char **env)
 	perror("execve");
 	free(full_path);
 	free_array(args);
-	exit(0);
+	exit(EXIT_FAILURE);
 }

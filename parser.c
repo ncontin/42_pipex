@@ -6,13 +6,13 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 12:23:53 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/11 12:56:24 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/12 11:30:49 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	**split_env_path(char **env)
+static char	**split_env_path(char **env)
 {
 	int		i;
 	char	**paths;
@@ -32,7 +32,7 @@ char	**split_env_path(char **env)
 	return (NULL);
 }
 
-char	*check_cmd_in_path(char *path, char *cmd)
+static char	*check_cmd_in_path(char *path, char *cmd)
 {
 	char	*full_path;
 	char	*temp;
@@ -52,7 +52,8 @@ char	*parse_command(char *cmd, char **env)
 	char	*full_path;
 	int		i;
 
-	i = 0;
+	if (!cmd)
+		return (NULL);
 	if (access(cmd, X_OK) == 0)
 	{
 		full_path = ft_strdup(cmd);
@@ -61,16 +62,14 @@ char	*parse_command(char *cmd, char **env)
 	paths = split_env_path(env);
 	if (!paths)
 		return (NULL);
+	i = 0;
 	while (paths[i])
 	{
 		full_path = check_cmd_in_path(paths[i], cmd);
 		if (full_path)
-		{
-			free_array(paths);
-			return (full_path);
-		}
+			break ;
 		i++;
 	}
 	free_array(paths);
-	return (NULL);
+	return (full_path);
 }

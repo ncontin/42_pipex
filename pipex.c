@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 11:53:58 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/11 12:54:04 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/12 11:30:24 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	main(int argc, char **argv, char **env)
 	}
 	if (fdout < 0)
 	{
+		close(fdin);
 		perror(argv[4]);
 		exit(1);
 	}
