@@ -6,19 +6,30 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:32:20 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/12 11:30:53 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/14 11:15:33 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static void	handle_dup2_failure(int fd, int end[2])
+{
+	close(fd);
+	close(end[0]);
+	close(end[1]);
+	perror("dup2");
+	exit(EXIT_FAILURE);
+}
 
 void	process_1st_child(int fdin, int end[2], char *cmd, char **env)
 {
 	char	*full_path;
 	char	**args;
 
-	dup2(fdin, STDIN_FILENO);
-	dup2(end[1], STDOUT_FILENO);
+	if (dup2(fdin, STDIN_FILENO) == -1)
+		handle_dup2_failure(fdin, end);
+	if (dup2(end[1], STDOUT_FILENO) == -1)
+		handle_dup2_failure(fdin, end);
 	close(end[1]);
 	close(end[0]);
 	close(fdin);
@@ -40,8 +51,10 @@ void	process_2nd_child(int fdout, int end[2], char *cmd, char **env)
 	char	*full_path;
 	char	**args;
 
-	dup2(end[0], STDIN_FILENO);
-	dup2(fdout, STDOUT_FILENO);
+	if (dup2(end[0], STDIN_FILENO) == -1)
+		handle_dup2_failure(fdout, end);
+	if (dup2(fdout, STDOUT_FILENO) == -1)
+		handle_dup2_failure(fdout, end);
 	close(end[1]);
 	close(end[0]);
 	close(fdout);
