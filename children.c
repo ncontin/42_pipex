@@ -6,7 +6,7 @@
 /*   By: ncontin <ncontin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 17:32:20 by ncontin           #+#    #+#             */
-/*   Updated: 2025/02/14 11:15:33 by ncontin          ###   ########.fr       */
+/*   Updated: 2025/02/14 11:31:38 by ncontin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,12 @@
 
 static void	handle_dup2_failure(int fd, int end[2])
 {
-	close(fd);
-	close(end[0]);
-	close(end[1]);
+	if (fd >= 0)
+		close(fd);
+	if (end[0] >= 0)
+		close(end[0]);
+	if (end[1] >= 0)
+		close(end[1]);
 	perror("dup2");
 	exit(EXIT_FAILURE);
 }
