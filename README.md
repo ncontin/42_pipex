@@ -22,7 +22,7 @@ Pipex is a program that simulates shell pipes by:
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/pipex.git
+git clone https://github.com/ncontin/42_pipex.git
 cd pipex
 make
 ```
